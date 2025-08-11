@@ -4,7 +4,7 @@ class XanoService: ObservableObject {
     
     // Tutaj wklej swój URL endpoint z XANO
     // Przykład: https://x8ki-letl-twmt.n7.xano.io/api:abcdef/recordings
-    private let baseURL = "TU_WKLEJ_SWÓJ_XANO_URL"
+    private let baseURL = "https://xsfg-jr8d-0fqm.f2.xano.io/api:aZHHYZgn/Upload_recording"
     
     @Published var isUploading = false
     @Published var uploadProgress: Double = 0.0
@@ -85,27 +85,12 @@ class XanoService: ObservableObject {
     private func createMultipartBody(audioData: Data, recording: Recording, boundary: String) -> Data {
         var body = Data()
         
-        // Dodanie pliku audio
+        // TYLKO plik audio - bez żadnych innych pól!
+        let fileName = "audio_\(Int(Date().timeIntervalSince1970)).m4a"
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"audio_file\"; filename=\"\(recording.name).m4a\"\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"audio_file\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
         body.append("Content-Type: audio/m4a\r\n\r\n".data(using: .utf8)!)
         body.append(audioData)
-        body.append("\r\n".data(using: .utf8)!)
-        
-        // Dodanie metadanych
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"name\"\r\n\r\n".data(using: .utf8)!)
-        body.append(recording.name.data(using: .utf8)!)
-        body.append("\r\n".data(using: .utf8)!)
-        
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"duration\"\r\n\r\n".data(using: .utf8)!)
-        body.append("\(recording.duration)".data(using: .utf8)!)
-        body.append("\r\n".data(using: .utf8)!)
-        
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"created_at\"\r\n\r\n".data(using: .utf8)!)
-        body.append(ISO8601DateFormatter().string(from: recording.date).data(using: .utf8)!)
         body.append("\r\n".data(using: .utf8)!)
         
         // Zamknięcie
